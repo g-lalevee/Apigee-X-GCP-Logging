@@ -46,7 +46,7 @@ You will use values from json key file during Apigee X KVM configuration.
 
 The sharedflow uses 2 KVM to store parameters and credentials to access to GCP Logging service :
 - GCP-Keys: 
-    - key "gcplogging.privKeyPem": the PEM-encoded private key ("**private_key**") from Service Account json key file 
+    - key "gcplogging.privKeyPem": the PEM-encoded private key (**private_key**) from Service Account json key file 
 - GCP-Logging-settings: 
     - key "gcplogging.jwt_issuer": **client_email** from Service Account json key file
     - key "gcplogging.logid": logname used to store Apigee log record in Cloud Logging
@@ -64,8 +64,8 @@ First, create KVMs using Apigee API:
 
 ```sh
 export TOKEN=$(gcloud auth print-access-token)
-export APIGEE_ORG=my-org-name
-export APIGEE_ENV=my-env
+export APIGEE_ORG=<my-org-name>
+export APIGEE_ENV=<my-env>
 export KVM_NAME1=GCP-Keys
 export KVM_NAME2=GCP-Logging-settings
 
@@ -76,11 +76,50 @@ curl -X POST \
     --data "{\"name\":\"$KVM_NAME1\",\"encrypted\": true}"
 
 curl -X POST \
-    "https://apigee.googleapis.com/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps" \
+    "https://apigee.googleapis.com/v1/organizations/${APIGEE_ORG}/environments/c/keyvaluemaps" \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     --data "{\"name\":\"$KVM_NAME2\",\"encrypted\": true}"
 ```
+
+Then, create KVM entries using Apigee Repository devrel [kvm-admin-api](https://github.com/apigee/devrel/tree/main/references/kvm-admin-api):
+
+```sh
+
+export TOKEN=$(gcloud auth print-access-token)
+export APIGEE_HOSTNAME=<my-apigee-hostname>
+export APIGEE_ORG=<my-org-name>
+export APIGEE_ENV=<my-env>
+export KVM_NAME1=GCP-Keys
+export KVM_NAME2=GCP-Logging-settings``
+
+
+curl -i -X POST \
+   "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME1/entries"
+   -H "Content-Type:application/json" \
+   -H "Authorization:Bearer $TOKEN" \
+   -d '{ "key": "gcplogging.privKeyPem", "value": "<copy here **private_key** value from SA json key file>" } ' \
+
+curl -i -X POST \
+  "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME2/entries"
+   -H "Content-Type:application/json" \
+   -H "Authorization:Bearer $TOKEN" \
+   -d '{ "key": "gcplogging.jwt_issuer", "value": "<copy here client_email value from SA json key file>"}' 
+
+curl -i -X POST \
+   "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME2/entries"
+   -H "Content-Type:application/json" \
+   -H "Authorization:Bearer $TOKEN" \
+   -d '{ "key": "gcplogging.logid", "value": "apigee-logs"}' 
+
+curl -i -X POST \
+   "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME2/entries"
+   -H "Content-Type:application/json" \
+   -H "Authorization:Bearer $TOKEN" \
+   -d '{ "key": "gcplogging.projectid", "value": "<copy here **project_id** from SA json key file>" }' 
+
+```
+
 
 
 ### Installing Sharedflow
