@@ -14,6 +14,9 @@ It is based on [DinoChiesa / Apigee-GCP-Logging-Example](https://github.com/Dino
 
 ## Requirement
 
+- A Google Cloud Platform account 
+- An Apigee X organisation
+
 ## Installation
 
 ### Setting up GCP
@@ -135,7 +138,6 @@ Upload Shared Flow and deploy it:
 
 
 
-
 ## Using Sharedflow in your proxies
 
 To use this shared flow in you proxy, insert a FlowCallout policy in Proxy Endpoint PostFlow
@@ -191,3 +193,11 @@ var LogRecord = {
 
 ...
 ```
+
+## See logs in Google Cloud Logging
+
+Open Google Cloud Logging [console](https://console.cloud.google.com/logs/viewer).
+- Using **Query Builder**, select **apigee-logs** log name, **Add**
+- Click **Run query**
+
+![Cloud Logging](./images/query-logging.png)
