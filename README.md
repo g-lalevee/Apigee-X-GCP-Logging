@@ -10,7 +10,7 @@
 ## Intro
 
 This repository contains a sharedflow for Apigee X to send proxy logs to Google Cloud Logging.<br>
-It is based on DinoChiesa / Apigee-GCP-Logging-Example, but updated to  be deployed on Apigeee X as a Sharedflow
+It is based on [DinoChiesa / Apigee-GCP-Logging-Example](https://github.com/DinoChiesa/Apigee-GCP-Logging-Example). , but updated to  be deployed on Apigeee X as a Sharedflow
 
 ## Requirement
 
