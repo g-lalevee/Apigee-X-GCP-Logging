@@ -120,10 +120,11 @@ curl -i -X POST \
 
 ### Installing Sharedflow
 
-Upload Shareflow and deploy it:
+Upload Shared Flow and deploy it:
 - Zip **sharedflowbundle** folder from this repository
 - From Apigee X, **Develop** menu, **Shared Flows**, click **Upload Bundle**
-- Browse your folders and select zip file: clicl **Open**
+- Browse your folders and select zip file: click **Open**
+- Enter a name for the new Shared Flow 
 
 ![Upload Shared Flow](./images/upload-sharedflow.png)
 
