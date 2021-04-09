@@ -119,7 +119,7 @@ curl -i -X POST \
 
 ```
 
-Note: you could usee the same curl commands to update the KVM entries.
+Note: you could use the same curl commands to update the KVM entries.
 
 ### Installing Sharedflow
 
@@ -131,19 +131,19 @@ Upload Shared Flow and deploy it:
 
 ![Upload Shared Flow](./images/upload-sharedflow.png)
 
-- Deploy it to the selected environment
+- Deploy it to your target environment
 
 
 
 
-### Using Sharedflow in your proxy
+## Using Sharedflow in your proxies
 
 To use this shared flow in you proxy, insert a FlowCallout policy in Proxy Endpoint PostFlow
 
 ![Insert Shared Flow](./images/insert-sharedflow.png)
 
 > As implemented in [DinoChiesa / Apigee-GCP-Logging-Example](https://github.com/DinoChiesa/Apigee-GCP-Logging-Example), you can send logs to Google Cloud Logging asynchronously (httpClient from within a JavaScript callout) with a minimum of delay introduced into the proxy flow, or wait for a  Google Cloud Logging response (ServiceCallout policy). 
-Call your proxy with header useSC:true, if you want to use ServiceCallout.
+Call your proxy with header **useSC** = true, if you want to use ServiceCallout.
 
 > If you want to customize Log Format, edit the script linked to Javascript policy **JS-SetLoggingRecord** in the Shared Flow. Current log format is:
 
@@ -189,5 +189,5 @@ var LogRecord = {
   "faultName": fault_name
  }
 
-context.setVariable("gcplogging.logpayload", JSON.stringify(LogRecord));
+...
 ```
