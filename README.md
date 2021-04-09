@@ -85,20 +85,18 @@ curl -X POST \
 Then, create KVM entries using Apigee Repository devrel [kvm-admin-api](https://github.com/apigee/devrel/tree/main/references/kvm-admin-api):
 
 ```sh
-
 export TOKEN=$(gcloud auth print-access-token)
 export APIGEE_HOSTNAME=<my-apigee-hostname>
 export APIGEE_ORG=<my-org-name>
 export APIGEE_ENV=<my-env>
 export KVM_NAME1=GCP-Keys
-export KVM_NAME2=GCP-Logging-settings``
-
+export KVM_NAME2=GCP-Logging-settings
 
 curl -i -X POST \
    "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME1/entries"
    -H "Content-Type:application/json" \
    -H "Authorization:Bearer $TOKEN" \
-   -d '{ "key": "gcplogging.privKeyPem", "value": "<copy here **private_key** value from SA json key file>" } ' \
+   -d '{ "key": "gcplogging.privKeyPem", "value": "<copy here private_key value from SA json key file>" } ' \
 
 curl -i -X POST \
   "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME2/entries"
@@ -116,15 +114,19 @@ curl -i -X POST \
    "https://$APIGEE_HOSTNAME/kvm-admin/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps/$KVM_NAME2/entries"
    -H "Content-Type:application/json" \
    -H "Authorization:Bearer $TOKEN" \
-   -d '{ "key": "gcplogging.projectid", "value": "<copy here **project_id** from SA json key file>" }' 
+   -d '{ "key": "gcplogging.projectid", "value": "<copy here project_id value from SA json key file>" }' 
 
 ```
 
-
-
 ### Installing Sharedflow
 
-work in progress
+Upload Shareflow and deploy it:
+- Zip **sharedflowbundle** folder from this repository
+- From Apigee X, **Develop** menu, **Shared Flows**, click **Upload Bundle**
+- Browse your folders and select zip file: clicl **Open**
+
+![Upload Shared Flow](./images/upload-sharedflow.png)
+
 
 ### Using Sharedflow in your proxy
 
