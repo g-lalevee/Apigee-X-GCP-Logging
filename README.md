@@ -15,7 +15,7 @@ It is based on [DinoChiesa / Apigee-GCP-Logging-Example](https://github.com/Dino
 ## Requirement
 
 - A Google Cloud Platform account 
-- An Apigee X organisation
+- An Apigee X organization
 
 ## Installation
 
@@ -196,7 +196,7 @@ var LogRecord = {
 
 ## See logs in Google Cloud Logging
 
-Open Google Cloud Logging [console](https://console.cloud.google.com/logs/viewer).
+Open [Google Cloud Logging Console](https://console.cloud.google.com/logs/viewer).
 - Using **Query Builder**, select **apigee-logs** log name, **Add**
 - Click **Run query**
 
