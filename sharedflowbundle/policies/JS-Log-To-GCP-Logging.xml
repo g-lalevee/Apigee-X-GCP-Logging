@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript name="JS-Log-To-GCP-Logging" timeLimit="400">
+    <Properties>
+        <Property name="authz_header">Bearer {gcplogging.token}</Property>
+        <Property name="payload">{
+  "logName": "projects/{private.gcplogging.projectid}/logs/{private.gcplogging.logid}",
+  "resource" : {
+    "type": "api",
+    "labels": {}
+  },
+  "labels": {
+      "flavor": "test"
+  },
+  "entries": [{
+      "severity" : "INFO",
+      "jsonPayload" : {gcplogging.logpayload}
+     }
+  ],
+  "partialSuccess": true
+}</Property>
+        <Property name="endpoint">https://logging.googleapis.com/v2/entries:write</Property>
+    </Properties>
+    <IncludeURL>jsc://messageTemplate.js</IncludeURL>
+    <ResourceURL>jsc://log-To-GCP-Logging.js</ResourceURL>
+</Javascript>

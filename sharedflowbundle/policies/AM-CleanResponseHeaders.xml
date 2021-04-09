@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage name="AM-CleanResponseHeaders">
+    <Properties/>
+    <Remove>
+        <Headers>
+            <Header name="useSC"/>
+        </Headers>
+        <Payload/>
+    </Remove>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

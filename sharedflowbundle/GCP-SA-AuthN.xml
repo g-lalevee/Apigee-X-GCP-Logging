@@ -1,0 +1,32 @@
+<SharedFlowBundle revision="30" name="GCP-SA-AuthN">
+    <DisplayName></DisplayName>
+    <Description></Description>
+    <CreatedAt>1617985354245</CreatedAt>
+    <LastModifiedAt>1617985354245</LastModifiedAt>
+    <Policies>
+        <Policy>Extract-GCP-Logging-AccessToken</Policy>
+        <Policy>Cache-Get-GCP-Logging-Token</Policy>
+        <Policy>KVM-Get-GCP-Logging-PrivateKey</Policy>
+        <Policy>JS-SetLoggingRecord</Policy>
+        <Policy>SC-Obtain-GCP-Logging-AccessToken</Policy>
+        <Policy>JS-Log-To-GCP-Logging</Policy>
+        <Policy>JS-Adjust-Expiry</Policy>
+        <Policy>Cache-Put-GCP-Logging-Token</Policy>
+        <Policy>AM-Set-GCP-Logging-Token</Policy>
+        <Policy>JWT-Generate-GCP-Logging-token</Policy>
+        <Policy>SC-Log-To-GCP-Logging</Policy>
+        <Policy>AM-CleanResponseHeaders</Policy>
+        <Policy>RF-No-AccessToken</Policy>
+        <Policy>KVM-Get-GCP-Logging-Settings</Policy>
+    </Policies>
+    <Resources>
+        <Resource>jsc://log-To-GCP-Logging.js</Resource>
+        <Resource>jsc://SetLoggingRecord.js</Resource>
+        <Resource>jsc://messageTemplate.js</Resource>
+        <Resource>jsc://adjust-Expiry.js</Resource>
+    </Resources>
+    <SharedFlows>
+        <SharedFlow>default</SharedFlow>
+    </SharedFlows>
+    <subType>SharedFlow</subType>
+</SharedFlowBundle>

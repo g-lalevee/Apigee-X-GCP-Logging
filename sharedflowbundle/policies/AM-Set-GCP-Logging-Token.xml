@@ -1,0 +1,7 @@
+<AssignMessage name='AM-Set-GCP-Logging-Token'>
+  <AssignVariable>
+    <Name>gcplogging.token</Name>
+    <Ref>gcplogging.newtoken</Ref>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+</AssignMessage>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ServiceCallout name="SC-Log-To-GCP-Logging">
+    <Request>
+        <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+        <Set>
+            <Headers>
+                <Header name="authorization">Bearer {gcplogging.token}</Header>
+            </Headers>
+            <Payload contentType="application/json">{
+                  "logName": "projects/{private.gcplogging.projectid}/logs/{private.gcplogging.logid}",
+                  "resource" : {
+                    "type": "api",
+                    "labels": {}
+                  },
+                  "labels": {
+                      "flavor": "test"
+                  },
+                  "entries": [{
+                      "severity" : "INFO",
+                      "jsonPayload" : {gcplogging.logpayload}
+                     }],
+                  "partialSuccess": true
+                }
+            </Payload>
+            <Verb>POST</Verb>
+        </Set>
+    </Request>
+    <Response>logResponse</Response>
+    <HTTPTargetConnection>
+        <Properties>
+            <Property name="success.codes">2xx, 3xx</Property>
+        </Properties>
+        <URL>https://logging.googleapis.com/v2/entries:write</URL>
+    </HTTPTargetConnection>
+</ServiceCallout>

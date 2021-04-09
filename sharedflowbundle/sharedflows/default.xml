@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+    <!--
+          This sequence is for logging to GCP Logging (previously known as
+          "Stackdriver").  It's all done in the Response flow. Ideally it would
+          be PostClientFlow, but I think that is not possible at this time.
+
+          GCP Logging exposes a REST API for writing log messages. Invoking it requires
+          a bearer (access) token.
+
+          Acquiring the token for GCP Logging involves an RFC7523 flow, in which
+          the client generates a JWT signed with his own private key, sends the JWT to
+          the OAuth service, and obtains an opaque access token in response. This access
+          token has an expiry of 1 hour. There are some stipulations for this JWT - its
+          expiry, its claims (scope, issuer), and the signer and algorithm. The Google
+          OAuth service will reject the request for a new token if any of these
+          requirements is not met.
+
+          The sequence here does these things:
+          - check the cache for a token.
+          - If not present, get a new one. And cache it.
+          - using the existing or new token, invoke GCP Logging to write a log message.
+
+      -->
+    <Step>
+        <!-- things like the projectid, log id, and client email (issuer) -->
+        <Name>KVM-Get-GCP-Logging-Settings</Name>
+    </Step>
+    <Step>
+        <!-- see if there is a viable token in cache -->
+        <Name>Cache-Get-GCP-Logging-Token</Name>
+    </Step>
+    <Step>
+        <!-- no token? get the private key, we're gonna need it -->
+        <Name>KVM-Get-GCP-Logging-PrivateKey</Name>
+        <Condition>gcplogging.token = null</Condition>
+    </Step>
+    <Step>
+        <!-- no token? generate a JWT to send to the Google OAuth service -->
+        <Name>JWT-Generate-GCP-Logging-token</Name>
+        <Condition>gcplogging.token = null</Condition>
+    </Step>
+    <Step>
+        <!-- no token? send the request to the Google OAuth service -->
+        <Name>SC-Obtain-GCP-Logging-AccessToken</Name>
+        <Condition>gcplogging.token = null</Condition>
+    </Step>
+    <Step>
+        <!-- no token? extract the new token and expiry from the response from the Google OAuth service -->
+        <Name>Extract-GCP-Logging-AccessToken</Name>
+        <Condition>gcplogging.token = null</Condition>
+    </Step>
+    <Step>
+        <!-- no token? adjust the expiry downward to be conservative with cache TTL -->
+        <Name>JS-Adjust-Expiry</Name>
+        <Condition>gcplogging.token = null</Condition>
+    </Step>
+    <Step>
+        <!-- no token? check for failure (no new token) -->
+        <Name>RF-No-AccessToken</Name>
+        <Condition>(gcplogging.token = null) and (gcplogging.newtoken = null)</Condition>
+    </Step>
+    <Step>
+        <!-- new token? insert it into cache -->
+        <Name>Cache-Put-GCP-Logging-Token</Name>
+        <Condition>(gcplogging.token = null) and (gcplogging.newtoken != null)</Condition>
+    </Step>
+    <Step>
+        <!-- new token? copy it to the context variable we want -->
+        <Name>AM-Set-GCP-Logging-Token</Name>
+        <Condition>gcplogging.token = null</Condition>
+    </Step>
+    <Step>
+        <Name>JS-SetLoggingRecord</Name>
+    </Step>
+    <Step>
+        <!-- finally, invoke GCP-Logging to emit a log message using a JS Callout for async behavior -->
+        <Name>JS-Log-To-GCP-Logging</Name>
+        <Condition>request.header.usesc = null</Condition>
+    </Step>
+    <Step>
+        <!-- or conditionally, invoke stackdriver with ServiceCallout to wait for a response-->
+        <Name>SC-Log-To-GCP-Logging</Name>
+        <Condition>request.header.usesc != null</Condition>
+    </Step>
+    <Step>
+        <Name>AM-CleanResponseHeaders</Name>
+    </Step>
+</SharedFlow>
