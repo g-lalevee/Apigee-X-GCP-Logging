@@ -16,7 +16,31 @@ It is based on [DinoChiesa / Apigee-GCP-Logging-Example](https://github.com/Dino
 
 ## Installation
 
-work in progress
+### Setting up GCP
+
+To authorize Apigee X to send logs records to Google Cloud Lgging, you must first: 
+- Create a service account in Google Cloud and assign it the necessary roles (at least, Logs Writer)
+- Create and download a json key for the service account
+
+To create it in your Apigee organization's GCP project, use following gcloud commands (or GCP Web UI):
+
+```sh
+SA_NAME=<your-new-service-account-name>
+
+gcloud iam service-accounts create $SA_NAME --display-name="Apigee Logging"
+
+PROJECT_ID=$(gcloud config get-value project)
+APIGEE_LOGGING_SA=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:$APIGEE_LOGGING_SA" \
+  --role="roles/logging.logWriter"
+
+gcloud iam service-accounts keys create $SA_NAME-key.json --iam-account=$APIGEE_LOGGING_SA --key-file-type=json 
+
+```
+
+You will use valuees from json key file during Apigee X KVM configuration.
 
 ### Setting up the KVMs
 
