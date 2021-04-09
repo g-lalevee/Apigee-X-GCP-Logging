@@ -44,7 +44,7 @@ You will use values from json key file during Apigee X KVM configuration.
 
 ### Setting up the KVMs
 
-The sharedflow uses 2 KVM to store parameters and credentials to access to GCP Logging service :
+The sharedflow uses 2 crypted KVMs to store parameters and credentials to access to GCP Logging service:
 - GCP-Keys: 
     - key "gcplogging.privKeyPem": the PEM-encoded private key (**private_key**) from Service Account json key file 
 - GCP-Logging-settings: 
@@ -57,10 +57,11 @@ The KVMs in Apigee X (or hybrid) still need to be created via the management API
 
 A full example of an implementation of the GET, POST and DELETE methods for KVMs with a dynamic name can be found in the Apigee DevRel Github repository: [kvm-admin-api](https://github.com/apigee/devrel/tree/main/references/kvm-admin-api). 
 
-We will use it in next steps to initialyse GCP-Keys and c KVMs. To deploy it, follow instructions in Apigee DevRel Github repository [kvm-admin-api](https://github.com/apigee/devrel/tree/main/references/kvm-admin-api).
+We will use it in next steps to initialize GCP-Keys and GCP-Logging-settings KVMs.
+To deploy kvm-admin-api, follow instructions in [Apigee DevRel Github repository](https://github.com/apigee/devrel/tree/main/references/kvm-admin-api).
 
 
-First, create KVMs using Apigee API:
+Then, create KVMs using Apigee API:
 
 ```sh
 export TOKEN=$(gcloud auth print-access-token)
@@ -82,7 +83,7 @@ curl -X POST \
     --data "{\"name\":\"$KVM_NAME2\",\"encrypted\": true}"
 ```
 
-Then, create KVM entries using Apigee Repository devrel [kvm-admin-api](https://github.com/apigee/devrel/tree/main/references/kvm-admin-api):
+After that, create KVM entries using kvm-admin-api:
 
 ```sh
 export TOKEN=$(gcloud auth print-access-token)
@@ -118,6 +119,8 @@ curl -i -X POST \
 
 ```
 
+Note: you could usee the same curl commands to update the KVM entries.
+
 ### Installing Sharedflow
 
 Upload Shared Flow and deploy it:
@@ -128,7 +131,63 @@ Upload Shared Flow and deploy it:
 
 ![Upload Shared Flow](./images/upload-sharedflow.png)
 
+- Deploy it to the selected environment
+
+
+
 
 ### Using Sharedflow in your proxy
 
-work in progress
+To use this shared flow in you proxy, insert a FlowCallout policy in Proxy Endpoint PostFlow
+
+![Insert Shared Flow](./images/insert-sharedflow.png)
+
+> As implemented in [DinoChiesa / Apigee-GCP-Logging-Example](https://github.com/DinoChiesa/Apigee-GCP-Logging-Example), you can send logs to Google Cloud Logging asynchronously (httpClient from within a JavaScript callout) with a minimum of delay introduced into the proxy flow, or wait for a  Google Cloud Logging response (ServiceCallout policy). 
+Call your proxy with header useSC:true, if you want to use ServiceCallout.
+
+> If you want to customize Log Format, edit the script linked to Javascript policy **JS-SetLoggingRecord** in the Shared Flow. Current log format is:
+
+```javascript
+var organization = context.getVariable("organization.name");
+var environment = context.getVariable("environment.name");
+var region = context.getVariable("system.region.name") || "none";
+var apiProxy = context.getVariable("apiproxy.name");
+var apiProxyRevision = context.getVariable("apiproxy.revision");
+var requestUrl = context.getVariable("request.url");
+var verb =  context.getVariable("request.verb");
+var correlationId = context.getVariable("messageid");
+var client_ip = context.getVariable("client.ip");
+var target_ip = context.getVariable("target.ip") || "none";
+var target_host = context.getVariable("target.host") || "none";
+var proxyRequestReceived = context.getVariable("client.received.end.timestamp");
+var proxyResponseSent = context.getVariable("client.sent.end.timestamp");
+var targetResponseReceived = context.getVariable("target.received.end.timestamp") || "none";
+var targetRequestSent = context.getVariable("target.sent.end.timestamp") || "none";
+var targetResponseCode = context.getVariable("message.status.code") || "none";
+var proxyResponseCode = context.getVariable("response.status.code") || "none";
+var fault_name = context.getVariable("fault.name") || "none";
+
+
+var LogRecord = {
+  "organization": organization,
+  "environment": environment,
+  "region": region,
+  "apiProxy": apiProxy,
+  "apiProxyRevision": apiProxyRevision,
+  "requestUrl": requestUrl,
+  "verb": verb,
+  "correlationId": correlationId,
+  "client_ip": client_ip,
+  "target_ip": target_ip, 
+  "target_host": target_host, 
+  "proxyRequestReceived": proxyRequestReceived,
+  "proxyResponseSent": proxyResponseSent,
+  "targetResponseReceived": targetResponseReceived,
+  "targetRequestSent": targetRequestSent,
+  "targetResponseCode": targetResponseCode,
+  "proxyResponseCode": proxyResponseCode,
+  "faultName": fault_name
+ }
+
+context.setVariable("gcplogging.logpayload", JSON.stringify(LogRecord));
+```
