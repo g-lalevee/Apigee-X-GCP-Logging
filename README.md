@@ -80,7 +80,7 @@ curl -X POST \
     --data "{\"name\":\"$KVM_NAME1\",\"encrypted\": true}"
 
 curl -X POST \
-    "https://apigee.googleapis.com/v1/organizations/${APIGEE_ORG}/environments/c/keyvaluemaps" \
+    "https://apigee.googleapis.com/v1/organizations/${APIGEE_ORG}/environments/$APIGEE_ENV/keyvaluemaps" \
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/json" \
     --data "{\"name\":\"$KVM_NAME2\",\"encrypted\": true}"
